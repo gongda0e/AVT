@@ -170,8 +170,6 @@ def read_abu_farha_annotations(videos: list,
                     (lno + 1) / frame_rate,  # end
                     label,
                 ])
-                import pdb
-                pdb.set_trace()
     return all_segments
 
 

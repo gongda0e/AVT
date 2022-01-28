@@ -899,7 +899,7 @@ class BaseVideoDataset(torch.utils.data.Dataset):
         n_frames = 10
         video_path = df_row['video_path']
         start = max(df_row['start'], 0)
-        end = df_row['end']
+        end = max(df_row['end'], 0)
         file_path = '/home/gongda0e/research/anticipation/AVT/DATA/50salads/features/'+video_path.split('.')[0]+'.npy'
         features = np.load(file_path)
         start_f = int(start*fps)
