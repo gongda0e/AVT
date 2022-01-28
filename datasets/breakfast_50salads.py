@@ -141,6 +141,8 @@ def read_abu_farha_annotations(videos: list,
                                frame_rate: int = None):
     all_segments = []
     for video in tqdm(videos, desc='Loading Abu Farha annots'):
+        if video.strip() != 'rgb-15-2.txt' :
+            continue
         video_fname, _ = hydra.utils.call(bundle_entry_to_vname_fn,
                                           video.strip(), root)
         if frame_rate is None:
@@ -168,6 +170,8 @@ def read_abu_farha_annotations(videos: list,
                     (lno + 1) / frame_rate,  # end
                     label,
                 ])
+                import pdb
+                pdb.set_trace()
     return all_segments
 
 

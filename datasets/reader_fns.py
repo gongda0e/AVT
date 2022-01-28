@@ -8,6 +8,7 @@ from pathlib import Path
 import torch
 import torch.nn as nn
 import torchvision
+import pdb
 
 from common.utils import get_video_info
 
@@ -19,7 +20,7 @@ class Reader(nn.Module):
 
 class DefaultReader(Reader):
     def forward(self, video_path, start, end, fps, df_row, **kwargs):
-        del df_row, fps  # Not needed here
+#        del df_row, fps  # Not needed here
         video_info = torchvision.io.read_video(video_path, start, end,
                                                **kwargs)
         # DEBUG see what is breaking

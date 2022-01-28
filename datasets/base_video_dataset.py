@@ -10,6 +10,8 @@ import operator
 from multiprocessing import Manager
 import math
 import h5py
+import pdb
+from einops import rearrange
 
 import pandas as pd
 import numpy as np
@@ -835,6 +837,8 @@ class BaseVideoDataset(torch.utils.data.Dataset):
                                        1)
                     ]).reshape(-1, 1))
             })
+        video_dict['video'] = self.__get_i3d__(df_row)
+#        video_dict['video'] = torch.zeros(1, 2048, 10, 1, 1)
         return video_dict
 
     def _repeat_process_idx(self, idx):
@@ -889,3 +893,33 @@ class BaseVideoDataset(torch.utils.data.Dataset):
 
     def __len__(self):
         return int(len(self.df) * self.repeat_data_times)
+
+    def __get_i3d__(self, df_row):
+        fps = 30
+        n_frames = 10
+        video_path = df_row['video_path']
+        start = max(df_row['start'], 0)
+        end = df_row['end']
+        file_path = '/home/gongda0e/research/anticipation/AVT/DATA/50salads/features/'+video_path.split('.')[0]+'.npy'
+        features = np.load(file_path)
+        start_f = int(start*fps)
+        end_f = int(end*fps)
+        video = features.transpose()[start_f:end_f]
+        frames_to_keep = range(
+            len(video))[::-max(int(round(fps / 1)), 1)][::-1]
+        video = torch.Tensor(video[frames_to_keep])
+        video_t = video.shape[0]
+        if video_t == 0 :
+            pdb.set_trace()
+        if video_t > n_frames :
+            video=video[-n_frames:]
+        elif video_t < n_frames :
+            n_pad = n_frames - video_t
+            def padding_fn(T, npad):
+                    return torch.cat([T] + [T[-1:]] * npad, dim=0)
+            video = padding_fn(video, n_pad)
+
+        #clipping
+        video = rearrange(video, 't c -> 1 c t 1 1')
+
+        return torch.Tensor(video)

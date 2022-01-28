@@ -194,6 +194,7 @@ def train_one_epoch(
             # models at full epoch boundaries. So set save_intermediates true
             # to save models at these points
             ckpt_names = []
+            save_intermediates = True
             if save_intermediates:
                 ckpt_names.append(f'checkpoint_ep{cur_epoch:.8f}.pth')
             store_checkpoint(ckpt_names, train_eval_op.model, optimizer,
